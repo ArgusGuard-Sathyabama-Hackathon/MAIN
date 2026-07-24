@@ -167,32 +167,6 @@ Workers Guided To Safety
 ```
 
 ---
-
-# Installation & Usage Guide
-
-## Smart Helmet Setup
-
-1. Connect MPU6050 sensor.
-2. Connect MQ-2 gas sensor.
-3. Connect DHT11 temperature sensor.
-4. Configure LED matrix display.
-5. Upload firmware to Arduino UNO R4 WiFi.
-6. Configure Wi-Fi credentials.
-7. Connect to backend server.
-
-## AI Dispatch Engine
-
-1. Configure AI model credentials.
-2. Start WebSocket services.
-3. Enable routing engine.
-
-## Nexus Dashboard
-
-1. Launch dashboard server.
-2. Connect to backend API.
-3. Open tactical command interface.
-4. Monitor live emergency events.
-
 ---
 
 # Hardware Components
