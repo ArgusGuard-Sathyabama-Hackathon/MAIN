@@ -1,15 +1,38 @@
 <img width="500" height="500" alt="ARGUS GUARD" src="https://github.com/user-attachments/assets/7eceafe9-8a71-4b90-a9d0-6b04f9a52900" />
 
-## Team Members
-Monish K S |
-Kesavasai R R |
-Revant D |
-Adwaith D N |
-Goutham S |
-Kishore S
 
-## The Problem — India's Emergency Response Crisis
+# ARGUS GUARD
 
+### Safety in Seconds
+
+## Team Details
+
+**Team Name:** ARGUS GUARD
+
+**Domain:** Artificial Intelligence (AI), Internet of Things (IoT), Emergency Response Systems
+
+### Team Members
+- Monish K S
+- Kesavasai R R
+- Revant D
+- Adwaith D N
+- Goutham S
+- Kishore S
+
+---
+
+# Problem Statement
+
+India faces a critical emergency response challenge where thousands of accident victims fail to receive timely care during the Golden Hour. Despite advances in healthcare, delayed emergency detection and inefficient dispatch systems continue to cost lives.
+
+According to national accident statistics, India accounts for approximately 11% of global road fatalities, with over 4.6 lakh accidents reported annually. Most emergency response systems rely on manual reporting and static dispatch mechanisms, resulting in delayed intervention when every minute matters.
+
+The two primary bottlenecks are:
+
+- Delayed emergency detection due to dependence on bystanders.
+- Inefficient routing of emergency services through traffic congestion, roadblocks, and damaged infrastructure.
+
+These delays significantly reduce the chances of survival and effective treatment.
 Every year India loses **1.68 lakh lives** in road and industrial accidents — the majority preventable, not because medicine failed, but because **help arrived too late**.
 
 | Stat | Reality |
@@ -29,106 +52,253 @@ The two bottlenecks are simple but catastrophic:
 
 ---
 
-## Our Solution — Argus Guard
+# Solution
 
-> *"On March 16, 2024, a boiler explosion at a Rewari factory severely burned 40+ workers. The blast wasn't the only tragedy. Panic meant it took minutes for anyone to call 108. When ambulances were dispatched, they hit gridlock on the industrial corridor. Help took 45 minutes.*
->
-> *In January 2025, the Supreme Court called this a constitutional failure. Argus Guard is the technical answer."*
+ARGUS GUARD is an AI-powered emergency response ecosystem designed to automate the complete rescue workflow from incident detection to emergency response coordination.
 
-**Argus Guard** is a Palantir-inspired autonomous AI rescue platform. It does not just alert people to emergencies — it **automates the entire emergency response chain** from the moment of incident to the moment help arrives.
+The platform combines:
+
+- Smart wearable safety hardware
+- AI-driven emergency dispatch intelligence
+- Dynamic route optimization
+- Real-time emergency monitoring
+- Intelligent evacuation guidance
+
+ARGUS GUARD reduces response delays by automatically detecting emergencies, analyzing incident conditions, dispatching appropriate response units, and guiding both rescuers and affected individuals through optimized routes.
 
 ---
+
+# Features
+
+## Operation Vanguard — Smart Helmet
+
+- Automatic fall detection using motion sensing
+- Toxic gas and smoke detection
+- High-temperature hazard detection
+- Instant emergency alert generation
+- LED matrix visual warning system
+- Worker safety monitoring
+
+## Operation Overwatch — AI Dispatch Engine
+
+- AI-powered emergency analysis
+- Natural language intelligence processing
+- Multi-agency response coordination
+- Dynamic route optimization
+- Roadblock and obstacle avoidance
+- Real-time tactical command dashboard
+- Live dispatch visualization
+- AI reasoning terminal
+
+## Operation Pathfinder — Evacuation Routing
+
+- Interactive facility floor mapping
+- Hazard-zone identification
+- Dynamic evacuation route generation
+- Safe path visualization
+- Real-time worker guidance
+
+---
+
+# Complete Tech Stack
+
+## Hardware
+
+- Arduino UNO R4 WiFi
+- MPU6050 Accelerometer & Gyroscope
+- MQ-2 Gas Sensor
+- DHT11 Temperature Sensor
+- LED Matrix Display
+- Portable Power Bank
+
+## Software
+
+- HTML
+- CSS
+- JavaScript
+- WebSocket Communication
+
+## AI Systems
+
+- Claude Haiku 4.5 (OpenRouter)
 ## SYSTEM ARCHITECTURE
 <img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/538e48b0-2db7-411c-89cf-c40b6152da7e" />
 
+# Detailed Workflow
 
-## The System — Three Operations, One Agent
+## Scenario 1: Worker Accident
 
-### ⚡ Operation Vanguard — Smart Helmet (Hardware Node) (In Progress)
-A worker-worn safety device (Arduino UNO R4 WiFi + MPU6050 + MQ-2 + DHT11) that autonomously detects crises and triggers the dispatch pipeline.
+```text
+Worker Fall Detected
+          ↓
+Impact Threshold Crossed
+          ↓
+Emergency Alert Triggered
+          ↓
+Alert Sent To Backend
+          ↓
+AI Incident Analysis
+          ↓
+Nearest Emergency Units Selected
+          ↓
+Optimal Route Generated
+          ↓
+Live Dispatch Initiated
+```
 
-- **Fall Detection:** If G-force exceeds threshold → instantly fires an alert.
-- **Gas Detection:** If toxic gas PPM spikes → fires hazard alert.
-- **Heat Detection:** If ambient temperature exceeds danger level → fires thermal alert.
-- The onboard **LED Matrix flashes a warning symbol** to nearby workers.
+## Scenario 2: Industrial Hazard
 
-### 🗺️ Operation Overwatch — AI Dispatch Engine *(Dashboard inprogress)*
+```text
+Gas Leak / Fire / Heat Hazard
+              ↓
+Sensor Threshold Exceeded
+              ↓
+Hazard Alert Generated
+              ↓
+AI Risk Assessment
+              ↓
+Affected Area Identified
+              ↓
+Emergency Units Dispatched
+              ↓
+Evacuation Route Generated
+              ↓
+Workers Guided To Safety
+```
+
+---
+
+# Installation & Usage Guide
+
+## Smart Helmet Setup
+
+1. Connect MPU6050 sensor.
+2. Connect MQ-2 gas sensor.
+3. Connect DHT11 temperature sensor.
+4. Configure LED matrix display.
+5. Upload firmware to Arduino UNO R4 WiFi.
+6. Configure Wi-Fi credentials.
+7. Connect to backend server.
+
+## AI Dispatch Engine
+
+1. Configure AI model credentials.
+2. Start WebSocket services.
+3. Enable routing engine.
+
+## Nexus Dashboard
+
+1. Launch dashboard server.
+2. Connect to backend API.
+3. Open tactical command interface.
+4. Monitor live emergency events.
+
+---
+
+# Hardware Components
+
+| Component | Purpose |
+|------------|------------|
+| Arduino UNO R4 WiFi | Main controller and connectivity |
+| MPU6050 | Fall and impact detection |
+| MQ-2 Sensor | Gas and smoke detection |
+| DHT11 | Temperature monitoring |
+| LED Matrix | Local visual warnings |
+| Power Bank | Portable power source |
+
+---
+
+# Hardware Workflow
+
+```text
+Fall / Impact Event
+          ↓
+MPU6050 Detection
+          ↓
+Emergency Alert
+          ↓
+Backend Processing
+          ↓
+AI Dispatch Decision
+          ↓
+Response Unit Deployment
+
+Gas / Heat Hazard
+          ↓
+Sensor Detection
+          ↓
+Risk Analysis
+          ↓
+Evacuation Routing
+          ↓
+Worker Guidance
+```
+
+### Circuit / Wiring Diagram
+
+<img width="1280" height="698" alt="image" src="https://github.com/user-attachments/assets/4fb6ce3d-6fa5-40f2-a99a-8613e1c76c43" />
+
+# Testing & Performance
+
+## Tested Functions
+
+- Fall detection workflow
+- Gas leak detection
+- Temperature hazard detection
+- AI incident parsing
+- Route optimization engine
+- Emergency dispatch simulation
+- Dashboard visualization
+- Evacuation routing logic
+
+## Performance Results
+
+| Phase | Traditional EMS | ARGUS GUARD |
+|---------|---------|---------|
+| Detection & Alert | 5–15 min | < 2 sec |
+| Transit & Routing | 15–25 min | 8–12 min |
+| Total Response Time | 25–40 min | 8–14 min |
+
+**Estimated overall response-time reduction: ~60%**
+
+---
+
+# Challenges Faced
+
+- Designing reliable incident detection thresholds
+- Integrating hardware and AI systems
+- Building dynamic route optimization logic
+- Processing unstructured emergency intelligence
+- Real-time visualization of emergency operations
+- Ensuring resilience during connectivity failures
+
+---
+
+# Future Scope
+
+- Integration with public emergency services
+- AI-assisted medical triage
+- Smart city emergency response integration
+- Advanced predictive hazard detection
+- Real-time GPS-enabled responder tracking
+- Large-scale industrial deployment
+- Multi-site emergency coordination
+
+---
+
+# Demo Screenshots 
+
+## Prototype
+
+<img width="591" height="1280" alt="image" src="https://github.com/user-attachments/assets/ffabeb42-52eb-4988-8616-9a9843e49a4d" />
+
+
+## Overwatch Dashboard
 
 <img width="2000" height="1545" alt="SS FINAL" src="https://github.com/user-attachments/assets/73cde45f-5be9-4db1-8935-810fa2f53dc3" />
 
-The core intelligence layer. A Palantir-style tactical command center that receives the crisis signal and orchestrates the rescue response.
+## Operation PathFinder
 
-- Ingests **unstructured natural language intel** (e.g., "Protest blocking Junction 2. Bad roads on J1").
-- Accepts a **crisis trigger** (e.g., "Fire and armed intrusion in Sector 4").
-- The AI agent parses both, identifies required response units (Police, Fire, Trauma), eliminates blocked routes from the routing graph, and dispatches the right vehicles along the optimal path.
-- **Glowing animated route vectors** show the live dispatch on the tactical map.
-- An **AI Reasoning Terminal** types out the agent's decision logic in real-time.
-
-### 🧭 Operation Pathfinder — Evacuation Routing *(In Progress)*
-Interactive factory floorplan with distributed virtual sensors. When a hazard is triggered on the map, the AI calculates and draws the optimal evacuation path for workers — routing them around the spreading danger zone in real time.
+<img width="1600" height="932" alt="image" src="https://github.com/user-attachments/assets/8441f345-16d2-4133-8200-9b314e24865c" />
 
 ---
-
-## The Numbers — What Argus Guard Actually Changes
-
-| Phase | Traditional EMS | Argus Guard | Time Saved | Reduction |
-|:---|:---|:---|:---:|:---:|
-| **Detection & Alert** | 5 – 15 mins | **< 2 seconds** | ~10 mins | **99%** |
-| **Transit & Routing** | 15 – 25 mins | **8 – 12 mins** | ~7–13 mins | **40–50%** |
-| **Total Lifecycle** | **25 – 40 mins** | **8 – 14 mins** | **~17–26 mins** | **~60%** |
-
-> Getting patients to definitive care 17–26 minutes faster is not an improvement — it is the difference between life and death.
-
----
-
-## How It Works — Technical Stack
-
-```
-[SMART HELMET]  →  [OVERWATCH BACKEND]  →  [NEXUS DASHBOARD]
-  Arduino R4           Python FastAPI           HTML/CSS/JS
-  MPU6050              WebSocket Server         Leaflet.js Map
-  MQ-2 Gas             AI Logic Parser          AI Terminal UI
-  DHT11 Temp           Route Optimizer          Real-time Vectors
-```
-
----
-
-
-
-What you will see:
-- Junction 1 & 2 get flashing red ✕ denial markers instantly.
-- Fire Engine and Trauma Ambulance launch simultaneously from their bases.
-- Glowing animated routes bend around the blocked junctions in real-time.
-- The **AI Reasoning Terminal** types the live decision log.
-- Time saved metric updates on screen.
-
-**AI Core Options (built-in):**
-| Mode | Model | Use When |
-|:---|:---|:---|
-| Default | `claude-haiku-4-5` via OpenRouter | Wi-Fi is stable |
-| Fallback | Llama 3.3 70B (free tier) | Budget / API issues |
-| Offline | Local Heuristic Core (pure regex) | Wi-Fi dies on stage |
-
-> ⚠️ The OpenRouter API key is client-side in `app.js`. Set a low spend cap and rotate the key after the demo at [openrouter.ai/keys](https://openrouter.ai/keys).
-
----
-
-## Hardware — Operation Vanguard Build
-<img width="1280" height="698" alt="image" src="https://github.com/user-attachments/assets/ddf0966b-5a36-4772-97d0-24945dc597b5" />
-
-| Component | Model | Role |
-|:---|:---|:---|
-| Microcontroller | Arduino UNO R4 WiFi | Brain + Wi-Fi + LED Matrix |
-| Motion Sensor | MPU6050 | Fall & impact detection |
-| Gas Sensor | MQ-2 | Toxic gas / smoke detection |
-| Temp Sensor | DHT11 | Heat & humidity monitoring |
-| Power | USB Power Bank | Portable demo power |
-
----
-
-
-
-<p align="center">
-  <strong>ARGUS GUARD &nbsp;|&nbsp; Safety in Seconds</strong><br/>
-  <em>Built at Hackathon 2026 — Automating the Article 21 Mandate</em>
-</p>
