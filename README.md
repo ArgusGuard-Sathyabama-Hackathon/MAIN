@@ -273,6 +273,7 @@ Worker Guidance
 
 ## Operation PathFinder
 
-<img width="1600" height="932" alt="image" src="https://github.com/user-attachments/assets/8441f345-16d2-4133-8200-9b314e24865c" />
+<img width="2000" height="1545" alt="FIRE FIRE jpg" src="https://github.com/user-attachments/assets/f363ee1c-de4e-43d4-b763-514012cd6f4e" />
+
 
 ---
