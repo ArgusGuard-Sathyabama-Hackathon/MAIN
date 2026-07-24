@@ -52,7 +52,7 @@ A worker-worn safety device (Arduino UNO R4 WiFi + MPU6050 + MQ-2 + DHT11) that 
 - **Heat Detection:** If ambient temperature exceeds danger level → fires thermal alert.
 - The onboard **LED Matrix flashes a warning symbol** to nearby workers.
 
-### 🗺️ Operation Overwatch — AI Dispatch Engine *(Dashboard Built)*
+### 🗺️ Operation Overwatch — AI Dispatch Engine *(Dashboard inprogress)*
 
 <img width="2000" height="1545" alt="SS FINAL" src="https://github.com/user-attachments/assets/73cde45f-5be9-4db1-8935-810fa2f53dc3" />
 
