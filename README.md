@@ -1,11 +1,11 @@
 <img width="500" height="500" alt="ARGUS GUARD" src="https://github.com/user-attachments/assets/7eceafe9-8a71-4b90-a9d0-6b04f9a52900" />
 
 ## Team Members
-Monish K S
-Kesavasai R R
-Revant D
-Adwaith D N
-Goutham S
+Monish K S |
+Kesavasai R R |
+Revant D |
+Adwaith D N |
+Goutham S |
 Kishore S
 
 ## The Problem — India's Emergency Response Crisis
