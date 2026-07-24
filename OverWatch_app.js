@@ -1,4 +1,6 @@
+/// PLEASE READ 
 
+// Edit the file name to app.js before using
 
 'use strict';
 
