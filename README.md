@@ -120,6 +120,7 @@ What you will see:
 ---
 
 ## Hardware — Operation Vanguard Build
+<img width="1280" height="698" alt="image" src="https://github.com/user-attachments/assets/ddf0966b-5a36-4772-97d0-24945dc597b5" />
 
 | Component | Model | Role |
 |:---|:---|:---|
