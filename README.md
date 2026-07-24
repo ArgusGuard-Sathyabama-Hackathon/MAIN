@@ -80,26 +80,7 @@ Interactive factory floorplan with distributed virtual sensors. When a hazard is
 
 ---
 
-## Running the Demo
 
-**Operation Nexus (Emergency Dispatch Dashboard):**
-```bash
-cd project-overwatch
-python3 -m http.server 8765
-# Open http://localhost:8765
-```
-
-**Demo Script for Judges (60 seconds):**
-
-1. In **News / Intel Feed**, type:
-   ```
-   Protest blocking Junction 2. Bad road conditions on Junction 1.
-   ```
-2. In **Crisis Trigger**, type:
-   ```
-   Fire in sector 4. Worker fell from scaffold with severe head injury.
-   ```
-3. Hit **`EXECUTE DISPATCH PROTOCOL`**.
 
 What you will see:
 - Junction 1 & 2 get flashing red ✕ denial markers instantly.
@@ -132,11 +113,7 @@ What you will see:
 
 ---
 
-## Development Methodology
 
-This project was built under hackathon time constraints using **AI-assisted pair programming** (Claude Code, Gemini). The team designed the full system architecture, the Palantir UI/UX philosophy, the hardware schematics, and the dispatch logic. AI tools were used to accelerate boilerplate and styling generation, allowing the team to focus entirely on the core intelligence engine and live hardware integration.
-
----
 
 <p align="center">
   <strong>ARGUS GUARD &nbsp;|&nbsp; Safety in Seconds</strong><br/>
