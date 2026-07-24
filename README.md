@@ -38,7 +38,7 @@ The two bottlenecks are simple but catastrophic:
 **Argus Guard** is a Palantir-inspired autonomous AI rescue platform. It does not just alert people to emergencies — it **automates the entire emergency response chain** from the moment of incident to the moment help arrives.
 
 ---
-SYSTEM ARCHITECTURE
+## SYSTEM ARCHITECTURE
 <img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/538e48b0-2db7-411c-89cf-c40b6152da7e" />
 
 
