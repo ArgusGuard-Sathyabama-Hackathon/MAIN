@@ -34,7 +34,7 @@ The two bottlenecks are simple but catastrophic:
 
 ## The System — Three Operations, One Agent
 
-### ⚡ Operation Vanguard — Smart Helmet (Hardware Node)
+### ⚡ Operation Vanguard — Smart Helmet (Hardware Node) (In Progress)
 A worker-worn safety device (Arduino UNO R4 WiFi + MPU6050 + MQ-2 + DHT11) that autonomously detects crises and triggers the dispatch pipeline.
 
 - **Fall Detection:** If G-force exceeds threshold → instantly fires an alert.
