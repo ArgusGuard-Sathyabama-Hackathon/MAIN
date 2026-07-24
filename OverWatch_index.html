@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PROJECT OVERWATCH // OPERATION NEXUS</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ══════════ TOP HUD BAR ══════════ -->
+  <header id="hud-bar">
+    <div class="hud-left">
+      <div class="hud-sigil">◈</div>
+      <div>
+        <h1>PROJECT <span>OVERWATCH</span></h1>
+        <div class="hud-sub">TACTICAL DISPATCH GRID // OPERATION NEXUS</div>
+      </div>
+    </div>
+    <div class="hud-right">
+      <div class="hud-stat">
+        <label>GRID STATUS</label>
+        <span id="grid-status" class="ok">● NOMINAL</span>
+      </div>
+      <div class="hud-stat">
+        <label>AI CORE</label>
+        <span id="core-status" class="ok">● STANDBY</span>
+      </div>
+      <div class="hud-stat">
+        <label>ZULU TIME</label>
+        <span id="hud-clock">--:--:--</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════ MAIN LAYOUT ══════════ -->
+  <main id="layout">
+
+    <!-- ── LEFT: CONTROL PANEL ── -->
+    <aside id="control-panel" class="panel">
+      <div class="panel-title">▚ COMMAND CONSOLE</div>
+
+      <section class="ctl-block">
+        <label class="ctl-label amber">▤ NEWS / INTEL FEED <span class="tag">SIGINT</span></label>
+        <textarea id="intel-input" rows="3" spellcheck="false"
+          placeholder="e.g. Protest blocking Junction 2. Bad road conditions reported near Junction 1."></textarea>
+      </section>
+
+      <section class="ctl-block">
+        <label class="ctl-label crimson">▲ CRISIS TRIGGER <span class="tag">PRIORITY-1</span></label>
+        <textarea id="crisis-input" rows="3" spellcheck="false"
+          placeholder="e.g. Fire in sector 4. Worker fell from scaffold — severe head injury. Armed intrusion at east gate."></textarea>
+      </section>
+
+      <section class="ctl-block">
+        <label class="ctl-label">◎ AI CORE SELECT</label>
+        <select id="model-select">
+          <option value="anthropic/claude-haiku-4.5" selected>CLAUDE HAIKU 4.5 — FAST / LOW COST</option>
+          <option value="meta-llama/llama-3.3-70b-instruct:free">LLAMA 3.3 70B — FREE TIER</option>
+          <option value="google/gemini-2.0-flash-001">GEMINI 2.0 FLASH — LOW COST</option>
+          <option value="LOCAL">LOCAL HEURISTIC CORE — NO API / OFFLINE</option>
+        </select>
+        <label class="ctl-label" style="margin-top:10px;">⚿ OPENROUTER UPLINK KEY</label>
+        <input id="api-key" type="password" spellcheck="false" placeholder="sk-or-v1-..." />
+      </section>
+
+      <button id="execute-btn">
+        <span class="btn-brackets">[</span> EXECUTE DISPATCH PROTOCOL <span class="btn-brackets">]</span>
+      </button>
+
+      <section class="legend">
+        <div class="panel-title small">▚ GRID LEGEND</div>
+        <div class="legend-row"><span class="dot cyan"></span> ROAD JUNCTION</div>
+        <div class="legend-row"><span class="dot amber pulse"></span> INCIDENT SITE — FACTORY</div>
+        <div class="legend-row"><span class="dot crimson"></span> JUNCTION DENIED / BLOCKED</div>
+        <div class="legend-row"><span class="line police"></span> POLICE VECTOR</div>
+        <div class="legend-row"><span class="line fire"></span> FIRE VECTOR</div>
+        <div class="legend-row"><span class="line medic"></span> TRAUMA VECTOR</div>
+      </section>
+    </aside>
+
+    <!-- ── RIGHT: MAP + TERMINAL ── -->
+    <section id="theater">
+      <div id="map-wrap" class="panel">
+        <div class="panel-title map-title">▚ THEATER MAP — SECTOR 7G INDUSTRIAL ZONE</div>
+        <div id="map"></div>
+        <div class="map-corner tl"></div>
+        <div class="map-corner tr"></div>
+        <div class="map-corner bl"></div>
+        <div class="map-corner br"></div>
+      </div>
+
+      <div id="terminal-wrap" class="panel">
+        <div class="panel-title term-title">▚ AI REASONING TERMINAL <span id="term-cursor-status">// IDLE</span></div>
+        <div id="terminal"><div class="term-line dim">&gt; OVERWATCH KERNEL v3.7.1 ONLINE. AWAITING CRISIS TRIGGER…</div></div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="scanlines"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
