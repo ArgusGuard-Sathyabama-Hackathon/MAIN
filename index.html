@@ -1,115 +1,1055 @@
+﻿<!--
+================================================================================
+PROJECT OVERWATCH — CITY-SCALE ORCHESTRATION ENGINE
+AUTHOR: GOUTHAMSIVA753
+
+PROBLEM STATEMENT:
+India faces a critical emergency response challenge where thousands of accident victims fail to receive timely care during the Golden Hour. 
+Despite advances in healthcare, delayed emergency detection and inefficient dispatch systems continue to cost lives.
+The two primary bottlenecks are:
+1. Detection Delay (5-15 min): Relying on bystanders to notice and call for help.
+2. Routing Delay (10-20 min): Ambulances get trapped in protests, strikes, damaged roads, and traffic gridlock.
+
+SOLUTION (OPERATION OVERWATCH):
+A City-Scale Multi-Incident AI Orchestration Engine that dynamically reallocates police, fire, and ambulance resources, continuously re-optimizes routes using live hazard intelligence, and prioritizes rescues in real time.
+================================================================================
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ARGUS GUARD // FACTORY SURVEILLANCE</title>
+  <title>PROJECT OVERWATCH // OPERATION NEXUS</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   PROJECT OVERWATCH â€” "PALANTIR" TACTICAL AESTHETIC
+   abyssal navy Â· neon cyan Â· sharp amber Â· severe crimson
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+:root {
+  --bg:        #050B14;
+  --bg-panel:  #081120;
+  --bg-inset:  #060D18;
+  --cyan:      #00F0FF;
+  --cyan-dim:  rgba(0, 240, 255, 0.35);
+  --cyan-faint:rgba(0, 240, 255, 0.08);
+  --amber:     #FFB000;
+  --crimson:   #FF003C;
+  --police:    #4DA6FF;
+  --text:      #B8D4DC;
+  --mono:      'Share Tech Mono', monospace;
+  --sans:      'Inter', sans-serif;
+  --chamfer:   polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+
+html, body { height: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  overflow: hidden;
+  background-image:
+    linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+
+/* â”€â”€ CRT scanline overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+#scanlines {
+  pointer-events: none;
+  position: fixed; inset: 0; z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg, transparent 0 2px, rgba(0, 0, 0, 0.12) 2px 4px);
+  mix-blend-mode: multiply;
+}
+
+/* â•â•â•â•â•â•â•â•â•â• HUD BAR â•â•â•â•â•â•â•â•â•â• */
+#hud-bar {
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 22px;
+  border-bottom: 1px solid var(--cyan-dim);
+  background: linear-gradient(180deg, #0A1626 0%, var(--bg) 100%);
+}
+
+.hud-left { display: flex; align-items: center; gap: 14px; }
+
+.hud-sigil {
+  font-size: 30px; color: var(--cyan);
+  text-shadow: 0 0 12px var(--cyan);
+  animation: sigil-spin 8s linear infinite;
+}
+@keyframes sigil-spin { to { transform: rotate(360deg); } }
+
+#hud-bar h1 {
+  font-family: var(--sans); font-weight: 800; font-size: 19px;
+  letter-spacing: 4px; color: #E8F6F8;
+}
+#hud-bar h1 span { color: var(--cyan); text-shadow: 0 0 10px var(--cyan-dim); }
+
+.hud-sub {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 3px; color: var(--cyan-dim); margin-top: 2px;
+}
+
+.hud-right { display: flex; gap: 30px; }
+.hud-stat { text-align: right; }
+.hud-stat label {
+  display: block; font-family: var(--mono); font-size: 9px;
+  letter-spacing: 2px; color: #4A6A78;
+}
+.hud-stat span { font-family: var(--mono); font-size: 14px; }
+.hud-stat span.ok    { color: var(--cyan); }
+.hud-stat span.warn  { color: var(--amber); animation: blink 0.9s step-end infinite; }
+.hud-stat span.crit  { color: var(--crimson); animation: blink 0.5s step-end infinite; }
+#hud-clock { color: var(--amber); }
+
+@keyframes blink { 50% { opacity: 0.15; } }
+
+/* â•â•â•â•â•â•â•â•â•â• LAYOUT â•â•â•â•â•â•â•â•â•â• */
+#layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 14px;
+  height: calc(100vh - 64px);
+  padding: 14px;
+}
+
+#theater {
+  display: grid;
+  grid-template-rows: 1fr 218px;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* â•â•â•â•â•â•â•â•â•â• PANELS (armored chamfered plates) â•â•â•â•â•â•â•â•â•â• */
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--cyan-dim);
+  clip-path: var(--chamfer);
+  padding: 14px;
+  position: relative;
+  box-shadow: inset 0 0 40px rgba(0, 240, 255, 0.04);
+}
+
+.panel-title {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 3px; color: var(--cyan);
+  border-bottom: 1px solid var(--cyan-faint);
+  padding-bottom: 8px; margin-bottom: 12px;
+  text-shadow: 0 0 8px var(--cyan-dim);
+}
+.panel-title.small { font-size: 10px; margin-top: 4px; }
+
+/* â•â•â•â•â•â•â•â•â•â• CONTROL PANEL â•â•â•â•â•â•â•â•â•â• */
+#control-panel { overflow-y: auto; }
+
+.ctl-block { margin-bottom: 16px; }
+
+.ctl-label {
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 2px; color: var(--cyan); margin-bottom: 6px;
+}
+.ctl-label.amber   { color: var(--amber); }
+.ctl-label.crimson { color: var(--crimson); }
+
+.tag {
+  font-size: 8px; letter-spacing: 1px;
+  border: 1px solid currentColor; padding: 1px 5px; opacity: 0.7;
+}
+
+textarea, select, input[type="password"] {
+  width: 100%;
+  background: var(--bg-inset);
+  border: 1px solid var(--cyan-dim);
+  color: var(--text);
+  font-family: var(--mono); font-size: 12px;
+  padding: 9px; resize: vertical;
+  outline: none;
+  caret-color: var(--cyan);
+}
+textarea:focus, select:focus, input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan-faint), inset 0 0 8px var(--cyan-faint);
+}
+textarea::placeholder, input::placeholder { color: #3A5563; }
+
+select { appearance: none; cursor: pointer; }
+select option { background: var(--bg-panel); }
+
+/* â”€â”€ EXECUTE BUTTON â”€â”€ */
+#execute-btn {
+  width: 100%;
+  padding: 14px 0;
+  margin: 4px 0 18px;
+  background: linear-gradient(180deg, rgba(255, 0, 60, 0.18), rgba(255, 0, 60, 0.05));
+  border: 1px solid var(--crimson);
+  clip-path: var(--chamfer);
+  color: var(--crimson);
+  font-family: var(--mono); font-size: 14px; letter-spacing: 3px;
+  cursor: pointer;
+  text-shadow: 0 0 8px rgba(255, 0, 60, 0.6);
+  transition: background 0.15s, color 0.15s;
+}
+#execute-btn:hover {
+  background: var(--crimson);
+  color: var(--bg);
+  text-shadow: none;
+  box-shadow: 0 0 24px rgba(255, 0, 60, 0.5);
+}
+#execute-btn:disabled { opacity: 0.4; cursor: wait; }
+#execute-btn .btn-brackets { animation: blink 1.2s step-end infinite; }
+
+/* â”€â”€ LEGEND â”€â”€ */
+.legend-row {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 1.5px; color: #6E92A0;
+  margin-bottom: 7px;
+}
+.dot { width: 9px; height: 9px; display: inline-block; }
+.dot.cyan    { background: var(--cyan);   box-shadow: 0 0 6px var(--cyan); }
+.dot.amber   { background: var(--amber);  box-shadow: 0 0 6px var(--amber); }
+.dot.crimson { background: var(--crimson);box-shadow: 0 0 6px var(--crimson); }
+.dot.pulse   { animation: blink 1s step-end infinite; }
+.line { width: 26px; height: 0; border-top: 2px dashed; display: inline-block; }
+.line.police { border-color: var(--police); }
+.line.fire   { border-color: var(--crimson); }
+.line.medic  { border-color: var(--amber); }
+
+/* â•â•â•â•â•â•â•â•â•â• MAP â•â•â•â•â•â•â•â•â•â• */
+#map-wrap { padding: 0; display: flex; flex-direction: column; }
+.map-title { margin: 14px 14px 10px; }
+#map { flex: 1; background: var(--bg); }
+
+/* corner brackets */
+.map-corner {
+  position: absolute; width: 22px; height: 22px; z-index: 500;
+  border-color: var(--cyan); border-style: solid; border-width: 0;
+  pointer-events: none;
+}
+.map-corner.tl { top: 46px; left: 8px;  border-top-width: 2px; border-left-width: 2px; }
+.map-corner.tr { top: 46px; right: 8px; border-top-width: 2px; border-right-width: 2px; }
+.map-corner.bl { bottom: 8px; left: 8px;  border-bottom-width: 2px; border-left-width: 2px; }
+.map-corner.br { bottom: 8px; right: 8px; border-bottom-width: 2px; border-right-width: 2px; }
+
+.leaflet-container { font-family: var(--mono); }
+.leaflet-control-attribution {
+  background: rgba(5, 11, 20, 0.8) !important;
+  color: #3A5563 !important; font-size: 8px !important;
+}
+.leaflet-control-attribution a { color: #4A6A78 !important; }
+.leaflet-control-zoom a {
+  background: var(--bg-panel) !important; color: var(--cyan) !important;
+  border: 1px solid var(--cyan-dim) !important;
+}
+
+/* â”€â”€ CUSTOM MARKERS â”€â”€ */
+.mk { position: relative; }
+.mk-label {
+  position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+  font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px;
+  white-space: nowrap; color: var(--cyan);
+  text-shadow: 0 0 6px #000, 0 0 6px #000;
+}
+
+/* junction: glowing node */
+.mk-junction .mk-core {
+  width: 12px; height: 12px; margin: 6px auto;
+  background: var(--bg); border: 2px solid var(--cyan);
+  transform: rotate(45deg);
+  box-shadow: 0 0 10px var(--cyan-dim);
+}
+
+/* target: pulsing radar ring target */
+.mk-target .mk-ring {
+  position: absolute; inset: 0;
+  border: 1px solid var(--amber);
+  animation: radar 2s ease-out infinite;
+}
+.mk-target .mk-ring.r2 { animation-delay: 1s; }
+@keyframes radar {
+  from { transform: scale(0.25); opacity: 1; }
+  to   { transform: scale(1.35); opacity: 0; }
+}
+.mk-target .mk-core {
+  position: absolute; top: 50%; left: 50%;
+  width: 14px; height: 14px; transform: translate(-50%, -50%);
+  background: var(--amber); box-shadow: 0 0 14px var(--amber);
+}
+.mk-target .mk-label { color: var(--amber); top: -14px; }
+.mk-target.crisis .mk-core { background: var(--crimson); box-shadow: 0 0 18px var(--crimson); }
+.mk-target.crisis .mk-ring { border-color: var(--crimson); animation-duration: 0.9s; }
+.mk-target.crisis .mk-label { color: var(--crimson); animation: blink 0.6s step-end infinite; }
+
+/* crisis generic */
+.mk-junction.crisis .mk-core { background: var(--crimson); border-color: var(--crimson); box-shadow: 0 0 18px var(--crimson); animation: blink 0.6s step-end infinite; }
+.mk-junction.crisis .mk-label { color: var(--crimson); animation: blink 0.6s step-end infinite; }
+.mk-base.crisis .mk-core { color: var(--crimson); box-shadow: 0 0 18px var(--crimson); animation: blink 0.6s step-end infinite; }
+.mk-base.crisis .mk-label { color: var(--crimson); animation: blink 0.6s step-end infinite; }
+
+/* base: crosshair */
+.mk-base .mk-core {
+  width: 18px; height: 18px; margin: 3px auto; position: relative;
+  border: 1.5px solid currentColor;
+  box-shadow: 0 0 10px currentColor;
+}
+.mk-base .mk-core::before, .mk-base .mk-core::after {
+  content: ''; position: absolute; background: currentColor;
+}
+.mk-base .mk-core::before { left: 50%; top: -5px; bottom: -5px; width: 1.5px; transform: translateX(-50%); }
+.mk-base .mk-core::after  { top: 50%; left: -5px; right: -5px; height: 1.5px; transform: translateY(-50%); }
+.mk-base.police { color: var(--police); }
+.mk-base.fire   { color: var(--crimson); }
+.mk-base.medic  { color: var(--amber); }
+.mk-base .mk-label { color: currentColor; }
+.mk-base.dispatched .mk-core { animation: blink 0.5s step-end infinite; }
+
+/* blocked junction: flashing red X */
+.mk-blocked { animation: blink 0.45s step-end infinite; }
+.mk-blocked .x1, .mk-blocked .x2 {
+  position: absolute; top: 50%; left: 50%;
+  width: 30px; height: 4px;
+  background: var(--crimson);
+  box-shadow: 0 0 12px var(--crimson);
+}
+.mk-blocked .x1 { transform: translate(-50%, -50%) rotate(45deg); }
+.mk-blocked .x2 { transform: translate(-50%, -50%) rotate(-45deg); }
+.mk-blocked .mk-label { color: var(--crimson); top: -24px; }
+
+/* moving dispatch unit */
+.mk-unit .mk-core {
+  width: 10px; height: 10px; margin: 4px auto;
+  transform: rotate(45deg);
+  background: currentColor;
+  box-shadow: 0 0 14px currentColor, 0 0 26px currentColor;
+}
+.mk-unit.police { color: var(--police); }
+.mk-unit.fire   { color: var(--crimson); }
+.mk-unit.medic  { color: var(--amber); }
+
+/* â”€â”€ ANIMATED ROUTE VECTORS (Leaflet SVG paths) â”€â”€ */
+.route-line {
+  stroke-dasharray: 8 12;
+  animation: dash-flow 0.7s linear infinite;
+}
+.route-glow { opacity: 0.25; filter: blur(3px); }
+@keyframes dash-flow { to { stroke-dashoffset: -20; } }
+
+/* â•â•â•â•â•â•â•â•â•â• TERMINAL â•â•â•â•â•â•â•â•â•â• */
+#terminal-wrap { display: flex; flex-direction: column; }
+.term-title { display: flex; justify-content: space-between; }
+#term-cursor-status { color: #4A6A78; }
+#term-cursor-status.busy { color: var(--amber); animation: blink 0.7s step-end infinite; }
+
+#terminal {
+  flex: 1; overflow-y: auto;
+  background: var(--bg-inset);
+  border: 1px solid var(--cyan-faint);
+  padding: 10px 12px;
+  font-family: var(--mono); font-size: 12px; line-height: 1.65;
+}
+.term-line          { color: var(--cyan); text-shadow: 0 0 6px rgba(0, 240, 255, 0.25); }
+.term-line.warn     { color: var(--amber); }
+.term-line.crit     { color: var(--crimson); }
+.term-line.dim      { color: #4A6A78; }
+.term-line.ok       { color: #39FF88; }
+.term-line .cursor::after {
+  content: 'â–Š'; animation: blink 0.6s step-end infinite;
+}
+
+#terminal::-webkit-scrollbar, #control-panel::-webkit-scrollbar { width: 6px; }
+#terminal::-webkit-scrollbar-thumb, #control-panel::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+/* â”€â”€ MULTI-INCIDENT ORCHESTRATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.btn-secondary {
+  background: transparent;
+  color: var(--amber);
+  border-color: var(--amber);
+  margin-top: 8px;
+}
+.btn-secondary:hover {
+  background: rgba(255, 170, 0, 0.1);
+  box-shadow: 0 0 10px rgba(255, 170, 0, 0.3);
+}
+
+.incident-card {
+  background: rgba(255, 34, 68, 0.05);
+  border: 1px solid rgba(255, 34, 68, 0.3);
+  border-left: 3px solid var(--crimson);
+  padding: 6px;
+  margin-bottom: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+}
+.incident-card .inc-title { color: var(--crimson); font-weight: bold; margin-bottom: 4px; }
+.incident-card .inc-desc { color: var(--text-primary); margin-bottom: 4px; }
+.incident-card .inc-units { color: var(--amber); font-size: 9px; }
+
+.unit-status-item {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--panel-border);
+}
+.unit-status-item .u-name { color: var(--text-primary); }
+.unit-status-item .u-state { color: var(--text-dim); }
+.unit-status-item.active .u-state { color: var(--cyan); }
+.unit-status-item.on-scene .u-state { color: var(--green); }
+
+
+
+#terminal::-webkit-scrollbar-track, #control-panel::-webkit-scrollbar-track {
+  background: var(--bg-inset);
+}
+
+</style>
 </head>
 <body>
 
+  <!-- â•â•â•â•â•â•â•â•â•â• TOP HUD BAR â•â•â•â•â•â•â•â•â•â• -->
+  <header id="hud-bar">
+    <div class="hud-left">
+      <div class="hud-sigil">â—ˆ</div>
+      <div>
+        <h1>PROJECT <span>OVERWATCH</span></h1>
+        <div class="hud-sub">CITY-SCALE ORCHESTRATION ENGINE // OPERATION NEXUS</div>
+      </div>
+    </div>
+    <div class="hud-right">
+      <div class="hud-stat">
+        <label>GRID STATUS</label>
+        <span id="grid-status" class="ok">â— NOMINAL</span>
+      </div>
+      <div class="hud-stat">
+        <label>AI CORE</label>
+        <span id="core-status" class="ok">â— STANDBY</span>
+      </div>
+      <div class="hud-stat">
+        <label>ZULU TIME</label>
+        <span id="hud-clock">--:--:--</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- â•â•â•â•â•â•â•â•â•â• MAIN LAYOUT â•â•â•â•â•â•â•â•â•â• -->
   <main id="layout">
 
-    <!-- ══════════ LEFT PANEL ══════════ -->
-    <aside id="left-panel" class="panel">
-      <div id="brand">
-        <div id="brand-eye">◉</div>
-        <div>
-          <h1>ARGUS <span>GUARD</span></h1>
-          <div class="brand-sub">AUTONOMOUS FACTORY SENTINEL v2.1</div>
-        </div>
-      </div>
+    <!-- â”€â”€ LEFT: CONTROL PANEL â”€â”€ -->
+    <aside id="control-panel" class="panel">
+      <div class="panel-title">â–š COMMAND CONSOLE</div>
 
-      <section class="block">
-        <div class="block-title">THREAT LEVEL</div>
-        <div id="threat-bar">
-          <div class="threat-seg" data-level="SECURE">SECURE</div>
-          <div class="threat-seg" data-level="ELEVATED">ELEVATED</div>
-          <div class="threat-seg" data-level="CRITICAL">CRITICAL</div>
+      <section class="ctl-block">
+        <label class="ctl-label amber">â–¤ GLOBAL INTEL FEED <span class="tag">SIGINT</span></label>
+        <textarea id="intel-input" rows="2" spellcheck="false"
+          placeholder="e.g. Protest blocking Node J2. Heavy traffic near Node J5."></textarea>
+      </section>
+
+      <section class="ctl-block">
+        <label class="ctl-label crimson">â–² SPAWN NEW CRISIS <span class="tag">PRIORITY</span></label>
+        <textarea id="crisis-input" rows="2" spellcheck="false"
+          placeholder="e.g. Explosion at Downtown Mall (Node T2). Need fire and medical immediately."></textarea>
+        <button id="spawn-btn" class="btn-secondary">
+          + INJECT CRISIS
+        </button>
+      </section>
+
+      <section class="ctl-block" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
+        <div class="panel-title small" style="margin-bottom:8px">â–š ACTIVE INCIDENTS & FLEET</div>
+        <div id="fleet-status-panel" style="flex:1; overflow-y:auto; padding-right:5px;">
+          <!-- Dynamic JS injection here -->
+          <div class="dim" style="font-family:'Share Tech Mono'; font-size:10px;">ALL UNITS STANDBY. NO ACTIVE INCIDENTS.</div>
         </div>
       </section>
 
-      <section class="block grow">
-        <div class="block-title">INCIDENT LOG</div>
-        <div id="incident-log">
-          <div class="log-line dim">-- ARGUS KERNEL ONLINE. ALL SECTORS NOMINAL --</div>
+      <section class="ctl-block">
+        <div class="panel-title small" style="margin-bottom:8px">â–š MAP LEGEND</div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
+          <div class="legend-row" style="margin:0"><span class="dot cyan"></span> JUNCTION</div>
+          <div class="legend-row" style="margin:0"><span class="dot amber"></span> TARGET NODE</div>
+          <div class="legend-row" style="margin:0"><span class="dot crimson pulse"></span> CRISIS EVENT</div>
+          <div class="legend-row" style="margin:0"><span class="dot crimson"></span> BLOCKED NODE</div>
+          <div class="legend-row" style="margin:0"><span class="line police"></span> POLICE VECTOR</div>
+          <div class="legend-row" style="margin:0"><span class="line fire"></span> FIRE VECTOR</div>
         </div>
       </section>
 
-      <section class="block">
-        <div class="block-title">WORKER STATUS</div>
-        <div id="worker-status">
-          <div class="ws-item"><div class="ws-icon active">◆</div><div class="ws-num" id="ws-active">0</div><div class="ws-label">ACTIVE</div></div>
-          <div class="ws-item"><div class="ws-icon evac">▲</div><div class="ws-num" id="ws-evac">0</div><div class="ws-label">EVACUATED</div></div>
-          <div class="ws-item"><div class="ws-icon injured">✚</div><div class="ws-num" id="ws-injured">0</div><div class="ws-label">INJURED</div></div>
-        </div>
+      <section class="ctl-block">
+        <label class="ctl-label">â—Ž AI CORE SELECT</label>
+        <select id="model-select">
+          <option value="anthropic/claude-haiku-4.5" selected>CLAUDE HAIKU 4.5 â€” FAST / LOW COST</option>
+          <option value="meta-llama/llama-3.3-70b-instruct:free">LLAMA 3.3 70B â€” FREE TIER</option>
+          <option value="google/gemini-2.0-flash-001">GEMINI 2.0 FLASH â€” LOW COST</option>
+          <option value="LOCAL">LOCAL HEURISTIC CORE â€” OFFLINE</option>
+        </select>
+        <label class="ctl-label" style="margin-top:10px;">âš¿ OPENROUTER UPLINK KEY</label>
+        <input id="api-key" type="password" spellcheck="false" placeholder="sk-or-v1-..." />
       </section>
+
+      <button id="execute-btn">
+        <span class="btn-brackets">[</span> RUN AI ORCHESTRATION <span class="btn-brackets">]</span>
+      </button>
+
     </aside>
 
-    <!-- ══════════ CENTER ══════════ -->
-    <section id="center">
-      <div id="canvas-title">▚ FACTORY FLOOR — LIVE SURVEILLANCE <span id="feed-tag">● REC</span></div>
-      <div id="canvas-wrap">
-        <canvas id="floor"></canvas>
-        <div id="scanlines"></div>
-        <div id="vignette"></div>
-        <div class="corner tl"></div><div class="corner tr"></div>
-        <div class="corner bl"></div><div class="corner br"></div>
-        <div id="place-hint" class="hidden">⌖ CLICK ON MAP TO PLACE HAZARD</div>
+    <!-- â”€â”€ RIGHT: MAP + TERMINAL â”€â”€ -->
+    <section id="theater">
+      <div id="map-wrap" class="panel">
+        <div class="panel-title map-title">â–š THEATER MAP â€” CITY WIDE ORCHESTRATION</div>
+        <div id="map"></div>
+        <div class="map-corner tl"></div>
+        <div class="map-corner tr"></div>
+        <div class="map-corner bl"></div>
+        <div class="map-corner br"></div>
+      </div>
+
+      <div id="terminal-wrap" class="panel">
+        <div class="panel-title term-title">â–š AI FLEET COMMANDER TERMINAL <span id="term-cursor-status">// IDLE</span></div>
+        <div id="terminal"><div class="term-line dim">&gt; OVERWATCH KERNEL v4.0 ONLINE. CITY-SCALE GRAPH INITIALIZED.</div></div>
       </div>
     </section>
 
-    <!-- ══════════ RIGHT PANEL ══════════ -->
-    <aside id="right-panel" class="panel">
-
-      <section class="block">
-        <div class="block-title">HAZARD CONTROL</div>
-        <button class="hazard-btn fire" id="btn-fire">🔥 TRIGGER FIRE</button>
-        <button class="hazard-btn gas" id="btn-gas">☣️ TRIGGER GAS LEAK</button>
-        <div id="hazard-hint" class="hint hidden">Click on map to place hazard</div>
-      </section>
-
-      <section class="block">
-        <div class="block-title">EXIT STATUS</div>
-        <div id="exit-grid"><!-- exit cards generated by app.js --></div>
-      </section>
-
-      <section class="block">
-        <div class="block-title">AI SETTINGS</div>
-        <label class="field-label">OPENROUTER API KEY</label>
-        <input id="api-key" type="password" spellcheck="false" placeholder="sk-or-v1-..." />
-        <label class="field-label">MODEL</label>
-        <select id="model-select">
-          <option value="anthropic/claude-haiku-4.5" selected>CLAUDE HAIKU — FAST</option>
-          <option value="openai/gpt-4o-mini">GPT-4O-MINI</option>
-          <option value="mistralai/mistral-7b-instruct">MISTRAL 7B</option>
-        </select>
-        <button id="btn-connect">⚡ CONNECT AI</button>
-        <div id="ai-status" class="hint">UPLINK: <span class="dim">OFFLINE — LOCAL HEURISTIC CORE</span></div>
-      </section>
-
-      <section class="block">
-        <div class="block-title">SIM CONTROLS</div>
-        <label class="field-label">SPEED <span id="speed-readout">1.0x</span></label>
-        <input id="speed-slider" type="range" min="0.5" max="3" step="0.1" value="1" />
-        <button id="btn-reset">⟲ RESET SIMULATION</button>
-        <button id="btn-add">+ ADD WORKERS</button>
-      </section>
-
-    </aside>
   </main>
 
-  <!-- ══════════ BOTTOM BAR ══════════ -->
-  <footer id="bottom-bar">
-    <div class="stat"><label>TIME ELAPSED</label><span id="stat-time">00:00</span></div>
-    <div class="stat"><label>WORKERS EVACUATED</label><span id="stat-evac">0</span></div>
-    <div class="stat"><label>WORKERS INJURED</label><span id="stat-injured">0</span></div>
-    <div class="stat"><label>HAZARD COVERAGE</label><span id="stat-coverage">0%</span></div>
-  </footer>
+  <div id="scanlines"></div>
 
-  <script src="app.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   PROJECT OVERWATCH â€” CITY-SCALE ORCHESTRATION ENGINE
+   AI multi-incident fleet dispatcher with dynamic graph routing.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+'use strict';
+
+const CONFIG = {
+  OPENROUTER_KEY: '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',
+  OPENROUTER_URL: 'https://openrouter.ai/api/v1/chat/completions',
+  MAX_TOKENS: 500,
+  REQUEST_TIMEOUT_MS: 15000,
+};
+
+/* â”€â”€ THEATER GRAPH (Nodes & Edges) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+const GEO = {
+  nodes: {
+    // Targets (Potential Incident Sites)
+    'T1': { pos: [12.9716, 77.5946], name: 'FACTORY 7G', type: 'target' },
+    'T2': { pos: [12.9650, 77.6100], name: 'DOWNTOWN MALL', type: 'target' },
+    'T3': { pos: [12.9850, 77.5900], name: 'RESIDENTIAL TOWER', type: 'target' },
+    // Junctions
+    'J1': { pos: [12.9795, 77.5842], name: 'JUNCTION 1', type: 'junction' },
+    'J2': { pos: [12.9802, 77.6058], name: 'JUNCTION 2', type: 'junction' },
+    'J3': { pos: [12.9612, 77.5952], name: 'JUNCTION 3', type: 'junction' },
+    'J4': { pos: [12.9680, 77.5800], name: 'JUNCTION 4', type: 'junction' },
+    'J5': { pos: [12.9750, 77.6150], name: 'JUNCTION 5', type: 'junction' },
+    'J6': { pos: [12.9550, 77.6050], name: 'JUNCTION 6', type: 'junction' },
+    // Bases
+    'B1': { pos: [12.9902, 77.5742], name: 'POLICE HQ', type: 'base' },
+    'B2': { pos: [12.9914, 77.6164], name: 'FIRE DEPT', type: 'base' },
+    'B3': { pos: [12.9498, 77.5964], name: 'TRAUMA CENTER', type: 'base' },
+  },
+  edges: [
+    ['B1', 'J1'], ['B1', 'J4'],
+    ['B2', 'J2'], ['B2', 'J5'],
+    ['B3', 'J3'], ['B3', 'J6'],
+    ['J1', 'J4'], ['J1', 'J2'], ['J1', 'T3'],
+    ['J2', 'J5'], ['J2', 'T3'],
+    ['J3', 'J4'], ['J3', 'J6'], ['J3', 'T1'],
+    ['J4', 'T1'],
+    ['J5', 'T2'], ['J2', 'T1'],
+    ['J6', 'T2'], ['T1', 'T2'],
+  ]
+};
+
+// Build adjacency list & distances
+const graph = {};
+for (const id of Object.keys(GEO.nodes)) graph[id] = [];
+for (const [u, v] of GEO.edges) {
+  const pu = GEO.nodes[u].pos, pv = GEO.nodes[v].pos;
+  const dist = Math.hypot(pu[0] - pv[0], pu[1] - pv[1]);
+  graph[u].push({ node: v, dist });
+  graph[v].push({ node: u, dist });
+}
+
+/* â”€â”€ DIJKSTRA PATHFINDING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+function findPath(startId, goalId, blockedSet) {
+  const dist = {};
+  const prev = {};
+  const q = new Set();
+  
+  for (const v of Object.keys(GEO.nodes)) {
+    dist[v] = Infinity;
+    prev[v] = null;
+    q.add(v);
+  }
+  dist[startId] = 0;
+
+  while (q.size > 0) {
+    let u = null;
+    let minD = Infinity;
+    for (const v of q) {
+      if (dist[v] < minD) { minD = dist[v]; u = v; }
+    }
+    if (u === null || u === goalId) break;
+    q.delete(u);
+
+    for (const neighbor of graph[u]) {
+      const v = neighbor.node;
+      if (!q.has(v) || blockedSet.has(v)) continue;
+      const alt = dist[u] + neighbor.dist;
+      if (alt < dist[v]) {
+        dist[v] = alt;
+        prev[v] = u;
+      }
+    }
+  }
+
+  if (prev[goalId] === null && startId !== goalId) return null; // No path
+
+  const path = [];
+  let curr = goalId;
+  while (curr !== null) {
+    path.unshift(curr);
+    curr = prev[curr];
+  }
+  return path;
+}
+
+/* â”€â”€ MAP INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+const map = L.map('map', { zoomControl: true, attributionControl: false })
+  .setView([12.9700, 77.5950], 13);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+  subdomains: 'abcd', maxZoom: 19,
+}).addTo(map);
+
+function divMarker(pos, html, size, anchorMid = true) {
+  return L.marker(pos, {
+    icon: L.divIcon({ className: '', html, iconSize: [size, size], iconAnchor: anchorMid ? [size / 2, size / 2] : [size / 2, size] }),
+    interactive: false,
+  }).addTo(map);
+}
+
+// Render static nodes
+const markers = {};
+for (const [id, n] of Object.entries(GEO.nodes)) {
+  if (n.type === 'target') {
+    markers[id] = divMarker(n.pos, `<div class="mk mk-target" id="mk-${id}" style="width:36px;height:36px;"><div class="mk-ring"></div><div class="mk-core"></div><div class="mk-label">${id}</div></div>`, 36);
+  } else if (n.type === 'base') {
+    const cls = id === 'B1' ? 'police' : id === 'B2' ? 'fire' : 'medic';
+    markers[id] = divMarker(n.pos, `<div class="mk mk-base ${cls}" id="mk-${id}" style="width:24px;"><div class="mk-core"></div><div class="mk-label">${id}</div></div>`, 24);
+  } else {
+    markers[id] = divMarker(n.pos, `<div class="mk mk-junction" id="mk-${id}" style="width:16px;"><div class="mk-core"></div><div class="mk-label">${id}</div></div>`, 16);
+  }
+}
+
+let activeLayers = [];
+let blockedNodes = new Set();
+
+/* â”€â”€ TERMINAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+const termEl = document.getElementById('terminal');
+const termStatus = document.getElementById('term-cursor-status');
+let termQueue = [];
+let termBusy = false;
+
+function termLog(text, cls = '') {
+  termQueue.push({ text, cls });
+  if (!termBusy) drainTerm();
+}
+
+async function drainTerm() {
+  termBusy = true;
+  termStatus.textContent = '// PROCESSING';
+  termStatus.classList.add('busy');
+  while (termQueue.length) {
+    const { text, cls } = termQueue.shift();
+    const line = document.createElement('div');
+    line.className = `term-line ${cls}`;
+    const span = document.createElement('span');
+    span.className = 'cursor';
+    line.appendChild(span);
+    termEl.appendChild(line);
+    for (let i = 0; i < text.length; i++) {
+      span.textContent += text[i];
+      termEl.scrollTop = termEl.scrollHeight;
+      await new Promise(r => setTimeout(r, text.length > 60 ? 3 : 8));
+    }
+    span.classList.remove('cursor');
+    await new Promise(r => setTimeout(r, 60));
+  }
+  termStatus.textContent = '// IDLE';
+  termStatus.classList.remove('busy');
+  termBusy = false;
+}
+
+/* â”€â”€ HUD CLOCK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+setInterval(() => { document.getElementById('hud-clock').textContent = new Date().toISOString().slice(11, 19) + 'Z'; }, 500);
+
+/* â”€â”€ INCIDENT MANAGER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+class IncidentManager {
+  constructor() {
+    this.incidents = {}; // id -> { targetId, text, severity, active }
+    this.nextId = 1;
+  }
+
+  spawn(text) {
+    const id = `INC-${this.nextId++}`;
+    
+    // Parse location from text
+    let tId = null;
+    const tUpper = text.toUpperCase();
+    for (const node of Object.keys(GEO.nodes)) {
+      if (tUpper.includes(node)) {
+        tId = node;
+        break;
+      }
+    }
+    
+    if (!tId) {
+      const targets = ['T1', 'T2', 'T3'];
+      tId = targets[Math.floor(Math.random() * targets.length)];
+    }
+    
+    // Simple regex severity
+    const isCrit = /(fire|explos|shoot|mass|casualty|dead|riot)/i.test(text);
+    
+    this.incidents[id] = { id, targetId: tId, text, severity: isCrit ? 'CRITICAL' : 'ELEVATED', active: true };
+    const el = document.getElementById(`mk-${tId}`);
+    if (el) el.classList.add('crisis');
+    this.updateUI();
+    return id;
+  }
+
+  resolve(id) {
+    if (this.incidents[id]) {
+      const el = document.getElementById(`mk-${this.incidents[id].targetId}`);
+      if (el) el.classList.remove('crisis');
+      delete this.incidents[id];
+      this.updateUI();
+    }
+  }
+
+  updateUI() {
+    const panel = document.getElementById('fleet-status-panel');
+    const active = Object.values(this.incidents);
+    
+    let html = '';
+    for (const inc of active) {
+      html += `
+        <div class="incident-card">
+          <div class="inc-title">${inc.id} [${inc.targetId}] â€” ${inc.severity}</div>
+          <div class="inc-desc">${inc.text.slice(0, 50)}...</div>
+          <div class="inc-units">ASSIGNED: ${fleet.getAssignedUnits(inc.id).join(', ') || 'NONE'}</div>
+        </div>
+      `;
+    }
+    
+    html += '<div style="margin-top:10px;">';
+    for (const u of fleet.units) {
+      const cls = u.state === 'TRANSIT' ? 'active' : u.state === 'ON_SCENE' ? 'on-scene' : '';
+      html += `
+        <div class="unit-status-item ${cls}">
+          <span class="u-name">${u.id} (${u.type.toUpperCase()})</span>
+          <span class="u-state">${u.state} ${u.targetInc ? 'â†’ '+u.targetInc : ''}</span>
+        </div>
+      `;
+    }
+    html += '</div>';
+
+    if (active.length === 0) {
+      html = `<div class="dim" style="font-family:'Share Tech Mono'; font-size:10px;">ALL UNITS STANDBY. NO ACTIVE INCIDENTS.</div>` + html;
+    }
+    
+    panel.innerHTML = html;
+  }
+}
+
+/* â”€â”€ FLEET MANAGER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+class FleetManager {
+  constructor() {
+    this.units = [
+      { id: 'P-1', type: 'police', pos: 'B1', state: 'IDLE', targetInc: null, marker: null, routeLine: null, animFrame: null },
+      { id: 'P-2', type: 'police', pos: 'B1', state: 'IDLE', targetInc: null, marker: null, routeLine: null, animFrame: null },
+      { id: 'F-1', type: 'fire',   pos: 'B2', state: 'IDLE', targetInc: null, marker: null, routeLine: null, animFrame: null },
+      { id: 'M-1', type: 'medic',  pos: 'B3', state: 'IDLE', targetInc: null, marker: null, routeLine: null, animFrame: null },
+      { id: 'M-2', type: 'medic',  pos: 'B3', state: 'IDLE', targetInc: null, marker: null, routeLine: null, animFrame: null },
+    ];
+    
+    // Init markers
+    for (const u of this.units) {
+      const p = GEO.nodes[u.pos].pos;
+      u.marker = divMarker(p, `<div class="mk mk-unit ${u.type}" style="width:14px;"><div class="mk-core"></div><div class="mk-label" style="font-size:7px;top:16px;">${u.id}</div></div>`, 14);
+    }
+  }
+
+  getAssignedUnits(incId) {
+    return this.units.filter(u => u.targetInc === incId).map(u => u.id);
+  }
+
+  // Assigns unit to incident and calculates route
+  dispatch(unitId, incId) {
+    const unit = this.units.find(u => u.id === unitId);
+    const inc = incidents.incidents[incId];
+    if (!unit || !inc) return;
+
+    // If unit is in transit, we snap to nearest node for recalculation for simplicity
+    const startNode = unit.pos; 
+    const goalNode = inc.targetId;
+
+    const path = findPath(startNode, goalNode, blockedNodes);
+    
+    if (unit.routeLine) map.removeLayer(unit.routeLine);
+    if (unit.animFrame) cancelAnimationFrame(unit.animFrame);
+
+    if (!path) {
+      termLog(`> ${unit.id} CANNOT REACH ${goalNode} â€” NO ROUTE AVAILABLE`, 'crit');
+      unit.state = 'IDLE';
+      unit.targetInc = null;
+      incidents.updateUI();
+      return;
+    }
+
+    unit.state = 'TRANSIT';
+    unit.targetInc = incId;
+    
+    const colors = { police: '#4DA6FF', fire: '#FF003C', medic: '#FFB000' };
+    const latlngs = path.map(nid => GEO.nodes[nid].pos);
+    
+    // Bow segments for visual curve
+    const bowed = [];
+    for (let i = 0; i < latlngs.length; i++) bowed.push(...bowSegmented(latlngs[i], i));
+    
+    unit.routeLine = L.polyline(bowed, { color: colors[unit.type], weight: 2.5, opacity: 0.8, className: 'route-line', interactive: false }).addTo(map);
+    activeLayers.push(unit.routeLine);
+
+    this.animateUnit(unit, bowed, goalNode);
+    incidents.updateUI();
+  }
+
+  animateUnit(unit, latlngs, goalNode) {
+    const durationMs = latlngs.length * 400; // time proportional to distance
+    const cum = [0];
+    for (let i = 1; i < latlngs.length; i++) {
+      cum.push(cum[i - 1] + Math.hypot(latlngs[i][0] - latlngs[i - 1][0], latlngs[i][1] - latlngs[i - 1][1]));
+    }
+    const total = cum[cum.length - 1] || 1;
+    const start = performance.now();
+
+    const frame = (now) => {
+      if (unit.state !== 'TRANSIT') return;
+      const t = Math.min((now - start) / durationMs, 1);
+      const dist = t * total;
+      
+      let i = 1;
+      while (i < cum.length && cum[i] < dist) i++;
+      if (i >= cum.length) i = cum.length - 1;
+      
+      const segT = (dist - cum[i - 1]) / (cum[i] - cum[i - 1] || 1);
+      const a = latlngs[i - 1], b = latlngs[i];
+      unit.marker.setLatLng([a[0] + (b[0] - a[0]) * segT, a[1] + (b[1] - a[1]) * segT]);
+
+      if (t < 1) {
+        unit.animFrame = requestAnimationFrame(frame);
+      } else {
+        unit.state = 'ON_SCENE';
+        unit.pos = goalNode;
+        // if (unit.routeLine) map.removeLayer(unit.routeLine); // Removed so animation stays continuously
+        incidents.updateUI();
+      }
+    };
+    unit.animFrame = requestAnimationFrame(frame);
+  }
+
+  recalculateAllRoutes() {
+    for (const u of this.units) {
+      if (u.state === 'TRANSIT' && u.targetInc) {
+        termLog(`> RECALCULATING ROUTE FOR ${u.id}...`, 'warn');
+        this.dispatch(u.id, u.targetInc);
+      }
+    }
+  }
+}
+
+let _prev = null;
+function bowSegmented(pt, idx) {
+  if (idx === 0) { _prev = pt; return [pt]; }
+  const [aLat, aLng] = _prev, [bLat, bLng] = pt;
+  const out = [];
+  const dLat = bLat - aLat, dLng = bLng - aLng;
+  const mag = Math.hypot(dLat, dLng) || 1;
+  const bow = mag * 0.15;
+  for (let s = 1; s <= 8; s++) {
+    const t = s / 8;
+    const arc = Math.sin(Math.PI * t) * bow;
+    out.push([aLat + dLat * t + (-dLng / mag) * arc, aLng + dLng * t + (dLat / mag) * arc]);
+  }
+  _prev = pt;
+  return out;
+}
+
+const incidents = new IncidentManager();
+const fleet = new FleetManager();
+incidents.updateUI();
+
+/* â”€â”€ UI BINDINGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+document.getElementById('api-key').value = CONFIG.OPENROUTER_KEY;
+
+document.getElementById('spawn-btn').addEventListener('click', () => {
+  const text = document.getElementById('crisis-input').value.trim();
+  if (!text) return;
+  const id = incidents.spawn(text);
+  termLog(`> NEW CRISIS INJECTED: [${id}] "${text}"`, 'crit');
+  document.getElementById('crisis-input').value = '';
+});
+
+document.getElementById('execute-btn').addEventListener('click', async () => {
+  const intel = document.getElementById('intel-input').value.trim();
+  const model = document.getElementById('model-select').value;
+  const key = document.getElementById('api-key').value.trim();
+
+  document.getElementById('execute-btn').disabled = true;
+  document.getElementById('core-status').textContent = 'â— ANALYZING';
+  document.getElementById('core-status').className = 'warn';
+
+  termLog('> â•â•â•â•â•â•â•â• AI ORCHESTRATION CYCLE INITIATED â•â•â•â•â•â•â•â•', 'dim');
+
+  // Process INTEL for blocked junctions
+  if (intel) {
+    termLog(`> PROCESSING GLOBAL INTEL: "${intel}"`, 'warn');
+    const oldBlocked = new Set(blockedNodes);
+    
+    // Simple heuristic parser for blocked nodes in intel
+    const iLow = intel.toLowerCase();
+    for (const [id, n] of Object.entries(GEO.nodes)) {
+      if (n.type === 'junction' && iLow.includes(id.toLowerCase())) {
+        if (iLow.includes('block') || iLow.includes('protest') || iLow.includes('traffic')) {
+          if (!blockedNodes.has(id)) {
+            blockedNodes.add(id);
+            termLog(`> INTEL CONFIRMED: NODE ${id} BLOCKED.`, 'crit');
+            const m = divMarker(n.pos, `<div class="mk mk-blocked" style="width:24px;"><div class="x1"></div><div class="x2"></div></div>`, 24);
+            activeLayers.push(m);
+          }
+        }
+      }
+    }
+    
+    if (blockedNodes.size > oldBlocked.size) {
+      fleet.recalculateAllRoutes();
+    }
+  }
+
+  // Ask AI for Fleet Reallocation
+  const activeInc = Object.values(incidents.incidents);
+  if (activeInc.length === 0) {
+    termLog('> NO ACTIVE INCIDENTS. FLEET ON STANDBY.', 'dim');
+  } else {
+    termLog(`> ORCHESTRATING RESPONSE FOR ${activeInc.length} INCIDENTS...`, 'dim');
+    
+    let result;
+    if (model === 'LOCAL' || !key) {
+      result = heuristicAllocator(activeInc, fleet.units);
+    } else {
+      result = await aiAllocator(activeInc, fleet.units, model, key);
+    }
+
+    for (const log of result.reasoning) termLog(`> ${log}`);
+
+    // Execute assignments
+    for (const [unitId, incId] of Object.entries(result.assignments)) {
+      if (incId === 'IDLE') continue;
+      const u = fleet.units.find(x => x.id === unitId);
+      if (u && u.targetInc !== incId) {
+        termLog(`> REDIRECTING ${unitId} TO ${incId}`, 'ok');
+        fleet.dispatch(unitId, incId);
+      }
+    }
+  }
+
+  document.getElementById('core-status').textContent = 'â— STANDBY';
+  document.getElementById('core-status').className = 'ok';
+  document.getElementById('execute-btn').disabled = false;
+});
+
+/* â”€â”€ AI ORCHESTRATION LOGIC â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+function heuristicAllocator(active, units) {
+  const assignments = {};
+  const reasoning = ['LOCAL HEURISTIC CORE: ASSIGNING NEAREST UNITS TO CRISIS.'];
+  
+  // Sort by severity
+  const sorted = [...active].sort((a, b) => a.severity === 'CRITICAL' ? -1 : 1);
+  
+  for (const inc of sorted) {
+    const required = { police: 0, fire: 0, medic: 0 };
+    if (/fire|explos/i.test(inc.text)) required.fire = 1;
+    if (/casualty|dead|medic|injury/i.test(inc.text)) required.medic = 1;
+    if (/protest|shoot|armed/i.test(inc.text)) required.police = 1;
+    
+    for (const type of ['fire', 'medic', 'police']) {
+      if (required[type] > 0) {
+        // Find idle unit of type
+        const u = units.find(x => x.type === type && (x.state === 'IDLE' || (x.state === 'ON_SCENE' && x.targetInc !== inc.id)));
+        if (u) {
+          assignments[u.id] = inc.id;
+          reasoning.push(`ASSIGNED ${u.id} TO ${inc.id}.`);
+        }
+      }
+    }
+  }
+  return { assignments, reasoning };
+}
+
+async function aiAllocator(active, units, model, key) {
+  const prompt = `You are OVERWATCH, a city-scale fleet dispatcher.
+ACTIVE INCIDENTS:
+${JSON.stringify(active, null, 2)}
+AVAILABLE UNITS:
+${JSON.stringify(units.map(u => ({ id: u.id, type: u.type, state: u.state, targetInc: u.targetInc })), null, 2)}
+
+Prioritize CRITICAL incidents. Redirect units if a more severe crisis occurs.
+Respond ONLY in valid JSON:
+{
+  "assignments": { "P-1": "INC-1", "F-1": "INC-2" },
+  "reasoning": ["REALLOCATED F-1 FROM IDLE TO INC-2 DUE TO FIRE", "P-1 ASSIGNED TO INC-1"]
+}`;
+
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), CONFIG.REQUEST_TIMEOUT_MS);
+    const res = await fetch(CONFIG.OPENROUTER_URL, {
+      method: 'POST', signal: controller.signal,
+      headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model, max_tokens: CONFIG.MAX_TOKENS, temperature: 0.1, messages: [{ role: 'user', content: prompt }] }),
+    });
+    clearTimeout(timer);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    
+    const data = await res.json();
+    const raw = data.choices?.[0]?.message?.content ?? '';
+    const match = raw.replace(/```json|```/g, '').match(/\{[\s\S]*\}/);
+    return JSON.parse(match[0]);
+  } catch (err) {
+    termLog(`> AI UPLINK FAILED: ${err.message}. FALLING BACK TO HEURISTIC.`, 'crit');
+    return heuristicAllocator(active, units);
+  }
+}
+
+// Boot
+termLog('> GRAPH TOPOLOGY SYNCED: 3 BASES, 6 JUNCTIONS, 3 TARGETS.', 'dim');
+termLog('> FLEET STATUS: 5 UNITS AVAILABLE.', 'dim');
+
+</script>
 </body>
 </html>
+
