@@ -43,6 +43,9 @@ A worker-worn safety device (Arduino UNO R4 WiFi + MPU6050 + MQ-2 + DHT11) that 
 - The onboard **LED Matrix flashes a warning symbol** to nearby workers.
 
 ### 🗺️ Operation Overwatch — AI Dispatch Engine *(Dashboard Built)*
+
+<img width="2000" height="1545" alt="SS FINAL" src="https://github.com/user-attachments/assets/73cde45f-5be9-4db1-8935-810fa2f53dc3" />
+
 The core intelligence layer. A Palantir-style tactical command center that receives the crisis signal and orchestrates the rescue response.
 
 - Ingests **unstructured natural language intel** (e.g., "Protest blocking Junction 2. Bad roads on J1").
